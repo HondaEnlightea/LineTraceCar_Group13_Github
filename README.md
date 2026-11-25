@@ -3,6 +3,9 @@
 新潟大学工学部「電子情報通信設計製図」グループ 13 のライントレースカー開発リポジトリです。
 実機（Raspberry Pi Zero 2 W）へ転送する軽量プログラムと、PC 側で行う作図・資料生成・計測データを役割ごとに分離して管理しています。
 
+- GitHub: https://github.com/HondaEnlightea/LineTraceCar_Group13_Github
+- Clone URL: `https://github.com/HondaEnlightea/LineTraceCar_Group13_Github.git`
+
 ## ディレクトリ構成
 
 | パス | 対象環境 | 内容 |
