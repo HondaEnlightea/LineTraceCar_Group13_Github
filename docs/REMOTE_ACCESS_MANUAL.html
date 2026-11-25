@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グループ13 車載 Raspberry Pi Zero 2 W 遠隔操作マニュアル</title>
+<style>
+  :root {
+    --fg: #1f2937;
+    --muted: #4b5563;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --border: #cbd5e1;
+    --accent: #0f766e;
+    --warn-bg: #f0fdfa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Meiryo", "Yu Gothic UI", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+    line-height: 1.65;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+    font-size: 14.5px;
+  }
+  h1 {
+    font-size: 1.75rem;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 8px;
+    margin-top: 0;
+  }
+  h2 {
+    font-size: 1.32rem;
+    border-left: 5px solid var(--accent);
+    padding-left: 10px;
+    margin-top: 2rem;
+    break-after: avoid;
+  }
+  h3 {
+    font-size: 1.08rem;
+    color: #0f172a;
+    margin-top: 1.4rem;
+    break-after: avoid;
+  }
+  h4 {
+    font-size: 0.98rem;
+    color: var(--muted);
+    margin-top: 1.1rem;
+    break-after: avoid;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.4rem 0;
+  }
+  p { margin: 0.65rem 0; }
+  ul, ol {
+    margin: 0.5rem 0 0.8rem;
+    padding-left: 1.55rem;
+  }
+  li { margin: 0.28rem 0; }
+  code {
+    font-family: "Consolas", "Cascadia Mono", "DejaVu Sans Mono", monospace;
+    background: #f1f5f9;
+    padding: 0.12em 0.36em;
+    border-radius: 4px;
+    font-size: 0.91em;
+  }
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 6px;
+    padding: 10px 14px;
+    overflow-x: auto;
+    line-height: 1.45;
+    margin: 0.65rem 0;
+    break-inside: avoid;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+    font-size: 0.88em;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.9rem 0;
+    font-size: 0.93em;
+    break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 7px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #eef2f6;
+    font-weight: 700;
+  }
+  blockquote {
+    margin: 0.9rem 0;
+    padding: 10px 14px;
+    background: var(--warn-bg);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    break-inside: avoid;
+  }
+  blockquote p:first-child { margin-top: 0; }
+  blockquote p:last-child { margin-bottom: 0; }
+  a { color: var(--accent); }
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  @media print {
+    body {
+      max-width: none;
+      padding: 0;
+      font-size: 10.5pt;
+    }
+    pre {
+      border-color: #94a3b8;
+    }
+  }
+</style>
+</head>
+<body>
+<h1 id="グループ13-車載-raspberry-pi-zero-2-w-遠隔操作マニュアル">グループ13 車載 Raspberry Pi Zero 2 W 遠隔操作マニュアル</h1>
+<p>対象機器: 車体搭載 Raspberry Pi Zero 2 W（ホスト名: <code>car13main.local</code>） 対象読者: グループ 13 開発メンバー全員</p>
+<hr>
+<h2 id="1-対象機器と基本ルール">1. 対象機器と基本ルール</h2>
+<table><thead><tr><th>項目</th><th>設定値・ルール</th></tr></thead><tbody><tr><td>ホスト名</td><td><code>car13main.local</code>（接続環境により <code>car13main</code> の場合あり）</td></tr><tr><td>ユーザー名</td><td><code>group13</code></td></tr><tr><td>パスワード</td><td><code>&lt;班内で別途共有&gt;</code>（※資料・Git・公開チャットに書かないこと）</td></tr><tr><td>作業フォルダ（例）</td><td><code>~/EicDesignLab</code>（または <code>~/lf-group13</code>）</td></tr></tbody></table>
+<blockquote><p><strong>最重要ルール（秘密鍵と公開鍵の扱い）</strong></p>
+<ol><li><strong>秘密鍵（<code>id_ed25519_car13</code>）は絶対に他の人へ渡さないでください。</strong> メンバー各自が自分の PC で自分専用の鍵ペアを作成します。</li><li>公開鍵（<code>.pub</code>）を <code>car13main</code> に登録するときは、<strong>必ず追記（<code>&gt;&gt;</code>）</strong> を使います。上書き（<code>&gt;</code>）すると他メンバーの鍵がすべて消えてしまいます。</li></ol></blockquote>
+<hr>
+<h2 id="2-接続前の準備">2. 接続前の準備</h2>
+<ol><li><strong>同じ Wi-Fi（SSID）に接続する</strong><ul><li>自分の PC と車体の PiZeroW の両方を、<strong>授業で指定された実習室・実験室用の Wi-Fi（SSID）</strong> に接続してください。</li><li>大学全学 Wi-Fi（eduroam 等）は端末間通信が遮断されていることが多く、SSH が届きません。</li></ul></li><li><strong>起動待ちと疎通確認</strong><ul><li>マイコン用電源（単 3×3 本側）を入れてから、基板の緑色 LED の激しい点滅が落ち着くまで <strong>30〜60 秒</strong> 待ちます。</li><li>PC の端末（PowerShell / Terminal）で以下を実行し、応答があるか確認します。<pre><code class="language-powershell">ping car13main.local</code></pre></li><li><code>car13main.local</code> が見つからない場合は <code>ping car13main</code> も試してください。</li></ul></li></ol>
+<hr>
+<h2 id="3-基本の-ssh-接続と正しい終わり方">3. 基本の SSH 接続と正しい終わり方</h2>
+<h3 id="3-1-初回・通常の-ssh-接続">3-1. 初回・通常の SSH 接続</h3>
+<pre><code class="language-powershell">ssh group13@car13main.local</code></pre>
+<ul><li><strong>初回のみ</strong> <code>Are you sure you want to continue connecting (yes/no/[fingerprint])?</code> と聞かれます。<strong><code>yes</code></strong> と入力して <code>Enter</code> を押します（<code>y</code> のみは不可）。</li><li>続いて <code>group13@car13main.local&#x27;s password:</code> と表示されたら、<strong>班内で共有しているパスワード</strong>を入力して <code>Enter</code> を押します。<br>※ セキュリティ仕様上、<strong>入力中は画面に <code>*</code> も文字も一切表示されません</strong>。そのまま打ち切って <code>Enter</code> を押してください。</li><li>プロンプトが <code>group13@car13main:~ $</code> に変わればログイン完了です。</li></ul>
+<h3 id="3-2-正しい終わり方-2-種類の区別">3-2. 正しい終わり方（2 種類の区別）</h3>
+<table><thead><tr><th>目的</th><th>実行コマンド</th><th>注意事項</th></tr></thead><tbody><tr><td><strong>SSH 接続だけ切る</strong>（PiZeroW は動かしたまま）</td><td><code>exit</code>（または <code>Ctrl+D</code>）</td><td>PC 側へ戻ります。<strong>この時点ではまだ電池を抜かないでください。</strong></td></tr><tr><td><strong>電源を切る前の安全シャットダウン</strong></td><td><code>sudo poweroff</code></td><td>実行前に <code>who</code> で他の人がログイン中でないか確認。<strong>PiZeroW の緑色 LED が完全消灯してから</strong>電池を抜く。</td></tr><tr><td>応答不能時の強制切断</td><td><code>Enter</code> → <code>~</code> → <code>.</code></td><td>Wi-Fi 切断などで画面が固まったとき用。</td></tr></tbody></table>
+<blockquote><p><strong>電源切断の鉄則</strong> マイコン用電源（単 3×3 本）をシャットダウン前に直接切ると、microSD カード破損・CSV 消失の原因になります。 一方、<strong>モータ用電源（単 3×2 本）</strong> はマイコンと別系統のため、車体が暴走しそうな際の緊急停止としていつでも切って構いません。</p></blockquote>
+<hr>
+<h2 id="4-パスワードスキップ-ssh-公開鍵認証-の設定手順">4. パスワードスキップ（SSH 公開鍵認証）の設定手順</h2>
+<p><strong>各自の PC で最初に 1 回だけ設定</strong>します。設定後はパスワード入力なしでログインおよび <code>scp</code> 転送ができるようになります。</p>
+<h3 id="a-windows-powershell-の場合">A. Windows（PowerShell）の場合</h3>
+<blockquote><p><strong>Windows での注意</strong> Windows 標準の PowerShell には Linux の <code>ssh-copy-id</code> コマンドがありません。また、PowerShell 5.1 で <code>Out-File</code> / <code>Add-Content</code> の既定文字コードや UTF-8 BOM が入ると <code>~/.ssh/config</code> が読み込めなくなります。必ず以下の手順通り実行してください。</p></blockquote>
+<h4 id="ステップ-1-自分専用の-ssh-鍵を作成-既存鍵を保護するため別名にする">ステップ 1：自分専用の SSH 鍵を作成（既存鍵を保護するため別名にする）</h4>
+<pre><code class="language-powershell">mkdir &quot;$env:USERPROFILE\.ssh&quot; -Force | Out-Null
+ssh-keygen -t ed25519 -f &quot;$env:USERPROFILE\.ssh\id_ed25519_car13&quot; -C &quot;car13main-member&quot;</code></pre>
+<ul><li><code>Enter passphrase (empty for no passphrase):</code> → <strong>何も入力せず <code>Enter</code></strong></li><li><code>Enter same passphrase again:</code> → <strong>そのまま <code>Enter</code></strong></li></ul>
+<h4 id="ステップ-2-公開鍵-pub-を-car13main-に追記登録-ここで-1-回だけパスワード入力">ステップ 2：公開鍵（<code>.pub</code>）を <code>car13main</code> に追記登録（ここで 1 回だけパスワード入力）</h4>
+<pre><code class="language-powershell">Get-Content &quot;$env:USERPROFILE\.ssh\id_ed25519_car13.pub&quot; | ssh group13@car13main.local &quot;mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh &amp;&amp; { echo &#x27;&#x27;; tr -d &#x27;\r&#x27;; } &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;</code></pre>
+<ul><li><code>&gt;&gt;</code> により既存の他メンバーの公開鍵を残したまま末尾に追記されます。</li><li><code>tr -d &#x27;\r&#x27;</code> により Windows 由来の改行コード混入を防ぎます。</li></ul>
+<h4 id="ステップ-3-ssh-config-に接続先エイリアスを登録">ステップ 3：<code>~/.ssh/config</code> に接続先エイリアスを登録</h4>
+<pre><code class="language-powershell">Add-Content -Path &quot;$env:USERPROFILE\.ssh\config&quot; -Encoding ascii -Value @&quot;
+
+Host car13main
+    HostName car13main.local
+    User group13
+    IdentityFile ~/.ssh/id_ed25519_car13
+    IdentitiesOnly yes
+&quot;@</code></pre>
+<ul><li>※ もし <code>car13main.local</code> ではなく <code>car13main</code> で繋がる環境の場合は <code>HostName car13main</code> に書き換えてください。</li></ul>
+<h4 id="ステップ-4-パスワードなしでログインできるか確認">ステップ 4：パスワードなしでログインできるか確認</h4>
+<pre><code class="language-powershell">ssh -o BatchMode=yes car13main &quot;hostname &amp;&amp; whoami&quot;</code></pre>
+<p>パスワードを一切聞かれずに <code>car13main</code> と <code>group13</code> が表示されれば成功です。以後は <code>ssh car13main</code> だけで接続できます。</p>
+<hr>
+<h3 id="b-macos-linux-raspberry-pi-4-の場合">B. macOS / Linux / Raspberry Pi 4 の場合</h3>
+<ol><li><strong>専用鍵を作成</strong>（パスフレーズは空で <code>Enter</code> × 2）:<pre><code class="language-bash">mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_car13 -C &quot;car13main-member&quot;</code></pre></li><li><strong>公開鍵を <code>car13main</code> に登録</strong>（ここで 1 回だけパスワード入力）:<pre><code class="language-bash">ssh-copy-id -i ~/.ssh/id_ed25519_car13.pub group13@car13main.local</code></pre></li><li><strong><code>~/.ssh/config</code> に追記して権限を設定</strong>:<pre><code class="language-bash">cat &lt;&lt; &#x27;EOF&#x27; &gt;&gt; ~/.ssh/config
+
+Host car13main
+    HostName car13main.local
+    User group13
+    IdentityFile ~/.ssh/id_ed25519_car13
+    IdentitiesOnly yes
+EOF
+chmod 600 ~/.ssh/config</code></pre></li><li><strong>動作確認</strong>:<pre><code class="language-bash">ssh -o BatchMode=yes car13main &quot;hostname &amp;&amp; whoami&quot;</code></pre></li></ol>
+<hr>
+<h2 id="5-ファイル転送-scp-の基本">5. ファイル転送（<code>scp</code>）の基本</h2>
+<p>公開鍵認証の設定後は、パスワードなしで PC と PiZeroW 間のファイル送受信ができます（<strong>Windows PC 側の PowerShell</strong> から実行してください）。</p>
+<ul><li><strong>PC → PiZeroW へ計測プログラムのみを送る</strong>（HTML/PDF や過去データは送らない）:<pre><code class="language-powershell">ssh car13main &quot;mkdir -p ~/EicDesignLab/dev13/pi&quot;
+scp dev13\pi\*.py car13main:~/EicDesignLab/dev13/pi/</code></pre></li><li><strong>PiZeroW → PC へ計測 CSV を回収する</strong>（必ず <code>sudo poweroff</code> の前に実行）:<pre><code class="language-powershell">mkdir dev13\data\logs -Force
+scp -r car13main:~/EicDesignLab/dev13/pi/logs/* .\dev13\data\logs\</code></pre></li></ul>
+<hr>
+<h2 id="6-複数人で開発・試験するときのチーム運用ルール">6. 複数人で開発・試験するときのチーム運用ルール</h2>
+<ol><li><strong>実機ハードウェアの同時実行禁止</strong>: モータや A/D コンバータ（GPIO/SPI）を 2 人が同時に動かすと <code>GPIO busy</code> エラーや車体の予期せぬ暴走が起きます。実機を動かす前に必ず声をかけてください。</li><li><strong>シャットダウン前の <code>who</code> 確認</strong>: <code>sudo poweroff</code> や <code>sudo reboot</code> を打つ前に <code>who</code> を実行し、他メンバーが作業中でないか確認してください。</li><li><strong>鍵の適切な管理</strong>: <code>~/.ssh/id_ed25519_car13</code>（拡張子なし＝秘密鍵）を Git リポジトリ・Teams・共有 USB メモリ等に絶対にアップロードしないでください。</li><li><strong>教員リポジトリ（<code>msiplab/EicDesignLab</code>）の保護</strong>: <code>origin</code>（教員リポジトリ）への <code>git push</code> やプルリクエストは禁止です。班内共有はグループの共有リポジトリ（<code>lf-group13</code> 等）または <code>dev13/</code> 内で管理してください。</li></ol>
+<hr>
+<h2 id="7-トラブルシューティング">7. トラブルシューティング</h2>
+<table><thead><tr><th>症状</th><th>主な原因</th><th>対処法</th></tr></thead><tbody><tr><td><code>Could not resolve hostname car13main.local</code></td><td>別 Wi-Fi（eduroam 等）に接続、Pi 未起動</td><td>PC と Pi を同じ実験室 SSID に接続し、Pi 起動後 1 分待ってから <code>ping car13main.local</code>（または <code>car13main</code>）を確認。</td></tr><tr><td><code>ssh-copy-id</code> が見つからない（Windows）</td><td>Windows PowerShell には無いコマンド</td><td>セクション 4-A ステップ 2 の <code>Get-Content ... | ssh ...</code> を使用する。</td></tr><tr><td><code>Bad configuration option</code> / 文字化けエラー</td><td><code>~/.ssh/config</code> に UTF-8 BOM が入った</td><td>Notepad 等で UTF-8（BOM なし）で保存し直すか、<code>Add-Content -Encoding ascii</code> を使う。</td></tr><tr><td>公開鍵登録後もパスワードを聞かれる</td><td><code>~/.ssh</code> や <code>authorized_keys</code> の権限、または鍵の不一致</td><td><code>car13main</code> 側で <code>chmod 700 ~/.ssh &amp;&amp; chmod 600 ~/.ssh/authorized_keys</code> を実行し、<code>ssh -vvv car13main</code> で読み込まれている鍵を確認。</td></tr><tr><td><code>GPIO busy</code> / デバイス使用中エラー</td><td>他のプロセス・他メンバーが GPIO を占有中</td><td>誰かが別ターミナルやサービスでスクリプトを実行していないか <code>ps aux | grep python</code> で確認して停止する。</td></tr></tbody></table>
+<hr>
+<h2 id="8-このマニュアルの更新・html-pdf-出力手順">8. このマニュアルの更新・HTML / PDF 出力手順</h2>
+<p>本資料の原本は Markdown（<code>dev13/docs/REMOTE_ACCESS_MANUAL.md</code>）で管理しています。内容を編集した後は、Windows PC 上の <code>EicDesignLab</code> フォルダから以下を実行すると、配布用の <strong>スタンドアロン HTML</strong> および <strong>PDF</strong> を生成できます。</p>
+<pre><code class="language-powershell"># 1. Markdown → HTML のみ生成（外部ライブラリ不要・標準ライブラリのみで動作）
+python dev13\pc\render_manual.py dev13\docs\REMOTE_ACCESS_MANUAL.md
+
+# 2. Markdown → HTML と PDF を一括生成（Edge または Chrome を使用）
+python dev13\pc\render_manual.py dev13\docs\REMOTE_ACCESS_MANUAL.md --pdf</code></pre>
+<ul><li>生成されるファイル:<ul><li><code>dev13/docs/REMOTE_ACCESS_MANUAL.html</code>（ブラウザでそのまま閲覧可能）</li><li><code>dev13/docs/REMOTE_ACCESS_MANUAL.pdf</code>（印刷・Teams 配布向け）</li></ul></li><li>もし <code>--pdf</code> が環境都合で使えない場合は、生成された <code>REMOTE_ACCESS_MANUAL.html</code> を Edge / Chrome で開き、<strong><code>Ctrl + P</code> → 送信先「PDF として保存」</strong> を選んで保存できます。</li></ul>
+</body>
+</html>

@@ -1,0 +1,6 @@
+step_index,motor_command,condition,settle_s,measure_s,edges_left,edges_right,rpm_left_count,rpm_right_count,rpm_left_mean,rpm_left_std,rpm_right_mean,rpm_right_std,rpm_diff_r_minus_l,rpm_ratio_r_over_l,pwm_scale_left,pwm_scale_right
+1,0.20,noload_sample,1.500,4.278,237,236,101.52,100.96,101.52,2.96,100.96,3.92,-0.55,0.9945,0.9945,1.0000
+2,0.40,noload_sample,1.500,3.024,286,291,171.90,174.78,171.90,1.74,174.78,1.88,+2.88,1.0168,1.0000,0.9835
+3,0.60,noload_sample,1.500,2.827,310,318,198.40,203.68,198.40,2.25,203.68,2.75,+5.28,1.0266,1.0000,0.9741
+4,0.80,noload_sample,1.500,2.720,322,330,213.79,219.51,213.79,1.82,219.51,2.76,+5.72,1.0268,1.0000,0.9739
+5,1.00,noload_sample,1.500,2.317,279,298,216.25,230.92,216.25,1.98,230.92,2.61,+14.68,1.0679,1.0000,0.9364

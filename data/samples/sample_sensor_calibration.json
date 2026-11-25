@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "source": "run_20261104_141845.csv (sample extraction)"
+  },
+  "channels": {
+    "0": {
+      "channel": 0,
+      "position_label": "ch0(左外)",
+      "white_mean": 0.4332342493769303,
+      "white_std": 0.02743441518282923,
+      "black_mean": 0.08402262208127972,
+      "black_std": 0.002175464007744025,
+      "abs_contrast": 0.3492116272956506,
+      "midpoint": 0.258628435729105
+    },
+    "1": {
+      "channel": 1,
+      "position_label": "ch1(左内)",
+      "white_mean": 0.39522906609921094,
+      "white_std": 0.058926109571401215,
+      "black_mean": 0.05551976373069674,
+      "black_std": 0.0028095687195401117,
+      "abs_contrast": 0.3397093023685142,
+      "midpoint": 0.22537441491495383
+    },
+    "2": {
+      "channel": 2,
+      "position_label": "ch2(右内)",
+      "white_mean": 0.41308073824447517,
+      "white_std": 0.046806491478183,
+      "black_mean": 0.04460176367693182,
+      "black_std": 0.0033487591501375775,
+      "abs_contrast": 0.36847897456754336,
+      "midpoint": 0.22884125096070349
+    },
+    "3": {
+      "channel": 3,
+      "position_label": "ch3(右外)",
+      "white_mean": 0.5351527245328012,
+      "white_std": 0.0017673301453378382,
+      "black_mean": 0.05676562822995469,
+      "black_std": 0.004038902540038057,
+      "abs_contrast": 0.4783870963028465,
+      "midpoint": 0.2959591763813779
+    }
+  }
+}
